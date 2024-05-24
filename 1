@@ -1,0 +1,32 @@
+FROM alpine:latest as builder
+
+RUN apk add --no-cache openjdk8 curl tar && \
+    curl -O https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.89/bin/apache-tomcat-9.0.89.tar.gz && \
+    mkdir -p /usr/local/tomcat && \
+    tar -xzf apache-tomcat-9.0.89.tar.gz -C /usr/local/tomcat --strip-components=1 && \
+
+ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
+ENV CATALINA_HOME /usr/local/tomcat
+ENV TOMCAT_VERSION 9.0.89
+
+COPY mysql-connector-j-8.4.0.jar 
+COPY login.jsp /usr/local/tomcat/webapps/ROOT/login.jsp
+COPY index.jsp /usr/local/tomcat/webapps/ROOT/index.jsp
+COPY loginAction.jsp /usr/local/tomcat/webapps/ROOT/loginAction.jsp
+COPY join.jsp /usr/local/tomcat/webapps/ROOT/join.jsp
+COPY joinAcion.jsp /usr/local/tomcat/webapps/ROOT/joinAcion.jsp
+# 최종 단계
+FROM alpine:latest
+
+RUN apk add --no-cache openjdk8-jre-base && \
+    rm -rf /var/cache/apk/*
+
+ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk/jre
+ENV CATALINA_HOME /usr/local/tomcat
+ENV PATH $JAVA_HOME/bin:$CATALINA_HOME/bin:$PATH
+
+COPY --from=builder /usr/local/tomcat /usr/local/tomcat
+
+EXPOSE 8080
+
+CMD ["catalina.sh", "run"]

@@ -1,0 +1,8 @@
+<Context>
+    <Valve className="com.radiadesign.catalina.session.RedisSessionHandlerValve" />
+    <Manager className="com.radiadesign.catalina.session.RedisSessionManager"
+             host="clustercfg.yjs.hxmkqr.apn2.cache.amazonaws.com:6582"
+             port="6379" <!-- Redis 서버 포트 -->
+             database="0"
+             maxInactiveInterval="60" />
+</Context>
