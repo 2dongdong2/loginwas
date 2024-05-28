@@ -12,7 +12,6 @@ RUN apk add --no-cache openjdk8 curl tar && \
            /usr/local/tomcat/webapps/host-manager && \
     chmod +x /usr/local/tomcat/bin/*.sh
 
-
 COPY mysql-connector-j-8.4.0.jar /usr/local/tomcat/lib/
 COPY index.jsp /usr/local/tomcat/webapps/ROOT/
 COPY login.jsp /usr/local/tomcat/webapps/ROOT/
@@ -20,10 +19,7 @@ COPY loginAction.jsp /usr/local/tomcat/webapps/ROOT/
 COPY joinAction.jsp /usr/local/tomcat/webapps/ROOT/
 COPY join.jsp /usr/local/tomcat/webapps/ROOT/
 COPY redis-data-cache.properties /usr/local/tomcat/conf/
-COPY jedis-3.7.1.jar /usr/lib/jvm/java-1.8-openjdk/lib/
-COPY jedis-3.7.1.jar /usr/local/tomcat/lib/
-COPY redis-tomcat/lib/* /usr/local/tomcat/lib/
-COPY redis-tomcat/conf/* /usr/local/tomcat/conf/
+COPY redis-tomcat/*.jar /usr/local/tomcat/lib/
 
 # 최종 단계
 FROM alpine:latest
