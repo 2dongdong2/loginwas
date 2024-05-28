@@ -70,12 +70,13 @@
                 if (rs.next()) {
                     // 로그인 성공
                     String sessionId = session.getId();
-
+                    dbuserId = rs.getString("userID");
+                    dbuserPassword = rs.getString("userPassword");
                     try {
                         // Redis 연결
                         Jedis jedis = new Jedis("redis-ela.hxmkqr.ng.0001.apn2.cache.amazonaws.com", 6379);
+                        String sessionId = session.getId();
                         jedis.set(userID, sessionId);
-                        jedis.close();
                     } catch (Exception redisException) {
                         // Redis 연결 실패
                         redisException.printStackTrace();
