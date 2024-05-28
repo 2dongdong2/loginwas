@@ -28,7 +28,7 @@ COPY loginAction.jsp $CATALINA_HOME/webapps/ROOT/
 COPY index.jsp $CATALINA_HOME/webapps/ROOT/
 COPY join.jsp $CATALINA_HOME/webapps/ROOT/
 COPY joinAction.jsp $CATALINA_HOME/webapps/ROOT/
-COPY mysql-connector-j-8.4.0.jar /usr/local/tomcat/lib/
+COPY mysql-connector-j-8.4.0.jar $CATALINA_HOME/lib/
 
 FROM alpine:latest
 
