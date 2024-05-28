@@ -11,6 +11,9 @@ RUN apk add --no-cache openjdk8 curl tar && \
            /usr/local/tomcat/webapps/manager \
            /usr/local/tomcat/webapps/host-manager && \
     chmod +x /usr/local/tomcat/bin/*.sh
+    wget https://repo1.maven.org/maven2/redis/clients/jedis/3.7.1/jedis-3.7.1.jar && \
+    cp jedis-3.7.1.jar $JAVA_HOME/lib/ && \
+    mv jedis-3.7.1.jar $CATALINA_HOME/lib/
 
 COPY mysql-connector-j-8.4.0.jar /usr/local/tomcat/lib/
 COPY index.jsp /usr/local/tomcat/webapps/ROOT/
