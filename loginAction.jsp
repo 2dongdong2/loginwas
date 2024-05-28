@@ -75,14 +75,14 @@
     
                     // Redis에 세션 저장
                     try {
-                        Jedis jedis = new Jedis("redis-ela.hxmkqr.ng.0001.apn2.cache.amazonaws.com", 6379);
+                        Jedis jedis = new Jedis("pj2.tcnvoh.ng.0001.apn2.cache.amazonaws.com", 6379);
                         String sessionId = session.getId();
                         jedis.set(userID, sessionId);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
     
-                    response.sendRedirect("https://www.4tier.store?userId=" + userID);
+                    response.sendRedirect("https://4tier.store/member/?userId=" + userID);
                 } else {
                     out.println("<script>showPopup();</script>");
                 }
