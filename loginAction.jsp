@@ -70,26 +70,21 @@
                 rs = pstmt.executeQuery();
 
                 if (rs.next()) {
-                    // 로그인 성공
-                    String sessionId = session.getId();
                     dbuserId = rs.getString("userID");
                     dbuserPassword = rs.getString("userPassword");
+    
+                    // Redis에 세션 저장
                     try {
-                        // Redis 연결
                         Jedis jedis = new Jedis("redis-ela.hxmkqr.ng.0001.apn2.cache.amazonaws.com", 6379);
+                        String sessionId = session.getId();
                         jedis.set(userID, sessionId);
-                        jedis.close();
-                    } catch (Exception redisException) {
-                        // Redis 연결 실패
-                        redisException.printStackTrace();
-                        out.println("<script>alert('Redis 연결 실패: " + redisException.getMessage() + "');</script>");
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-
-                    // 로그인 성공 시 리다이렉트
-                    response.sendRedirect("/member?userId=" + userID);
+    
+                    response.sendRedirect("https://www.4tier.store?userId=" + userID);
                 } else {
-                    // 로그인 실패
-                    out.println("<script>alert('로그인 실패');</script>");
+                    out.println("<script>showPopup();</script>");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -106,24 +101,7 @@
                     try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
                 }
             }
-            if (rs.next()) {
-                dbuserId = rs.getString("userID");
-                dbuserPassword = rs.getString("userPassword");
-
-                // Redis에 세션 저장
-                try {
-                    Jedis jedis = new Jedis("redis-ela.hxmkqr.ng.0001.apn2.cache.amazonaws.com", 6379);
-                    String sessionId = session.getId();
-                    jedis.set(userID, sessionId);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                response.sendRedirect("https://www.4tier.store?userId=" + userID);
-            } else {
-                out.println("<script>showPopup();</script>");
-            }
-
+            
         %>
     </div>
 </body>
