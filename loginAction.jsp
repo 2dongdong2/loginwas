@@ -73,7 +73,7 @@
 
                     try {
                         // Redis 연결
-                        Jedis jedis = new Jedis("bm-prd-redis-pri-test.xd819b.ng.0001.apn2.cache.amazonaws.com", 6379);
+                        Jedis jedis = new Jedis("redis-ela.hxmkqr.ng.0001.apn2.cache.amazonaws.com", 6379);
                         jedis.set(userID, sessionId);
                         jedis.close();
                     } catch (Exception redisException) {
