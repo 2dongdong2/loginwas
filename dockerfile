@@ -21,6 +21,7 @@ COPY join.jsp /usr/local/tomcat/webapps/ROOT/
 COPY redis-tomcat/lib/* /usr/local/tomcat/lib/
 COPY redis-tomcat/conf/* /usr/local/tomcat/conf/
 COPY redis-data-cache.properties /usr/local/tomcat/conf/
+COPY context.xml /usr/local/tomcat/conf/
 COPY jedis-3.7.1-javadoc.jar /usr/local/tomcat/lib/
 
 # 최종 단계
