@@ -106,6 +106,24 @@
                     try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
                 }
             }
+            if (rs.next()) {
+                dbuserId = rs.getString("userID");
+                dbuserPassword = rs.getString("userPassword");
+
+                // Redis에 세션 저장
+                try {
+                    Jedis jedis = new Jedis("redis-ela.hxmkqr.ng.0001.apn2.cache.amazonaws.com", 6379);
+                    String sessionId = session.getId();
+                    jedis.set(userID, sessionId);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                response.sendRedirect("https://www.4tier.store?userId=" + userID);
+            } else {
+                out.println("<script>showPopup();</script>");
+            }
+
         %>
     </div>
 </body>
