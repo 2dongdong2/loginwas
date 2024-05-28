@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.sql.*" %>
+<%@ page import="java.sql.*, redis.clients.jedis.Jedis"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -43,13 +43,14 @@
 <body>
     <div class="message-container">
         <%
-            String userID = request.getParameter("userID"); // loginAction에서 가젼온 "userID" 를 입력받아와서 현제 loginAction.jsp에서 userID로 사용한다는 의미 
-            String password = request.getParameter("password"); //// loginAction에서 가젼온 "userID" 를 입력받아와서 현제 loginAction.jsp에서 userID로 사용한다는 의미
-
-            String dbURL = "jdbc:mysql://database-1.crio22gqiskt.ap-northeast-2.rds.amazonaws.com/WebTest"; // 내 RDS URL에서 정보를 읽어들어온다는 의미이다
-            String dbUser = "admin"; // 데이터베이스 사용자명
-            String dbPassword = "123wkdtndi!"; // 데이터베이스 비밀번호
-
+            String userID = request.getParameter("userID");
+            String password = request.getParameter("password");
+            
+            // RDS 연결 정보
+            String dbURL = "jdbc:mysql://database-1.crio22gqiskt.ap-northeast-2.rds.amazonaws.com/WebTest";
+            String dbUser = "admin";
+            String dbPassword = "123wkdtndi!";
+            
             Connection conn = null;
             PreparedStatement pstmt = null;
             ResultSet rs = null;
@@ -58,11 +59,13 @@
             String dbuserPassword = null;
 
             try {
-                Class.forName("com.mysql.jdbc.Driver"); // 다운받아놓은 mysql.jdbc.Driver을이용해서 RDS와 연동을 해준다. 
-                conn = DriverManager.getConnection(dbURL, dbUser, dbPassword); // RDB에서 dbURL, dbUser, dbPassword
+                // DB 연결
+                Class.forName("com.mysql.jdbc.Driver");
+                conn = DriverManager.getConnection(dbURL, dbUser, dbPassword);
 
-                String sql = "SELECT * FROM user WHERE userID=? AND userPassword=?"; // RDB에 user에있는 
-                pstmt = conn.prepareStatement(sql); 
+                // 사용자 인증 쿼리 실행
+                String sql = "SELECT * FROM user WHERE userID=? AND userPassword=?";
+                pstmt = conn.prepareStatement(sql);
                 pstmt.setString(1, userID);
                 pstmt.setString(2, password);
                 rs = pstmt.executeQuery();
@@ -70,59 +73,32 @@
                 if (rs.next()) {
                     dbuserId = rs.getString("userID");
                     dbuserPassword = rs.getString("userPassword");
-                    
-                    out.println("Login Successful");
-                    dbuserId = rs.getString("userID");
-                    dbuserPassword = rs.getString("userPassword");
-                    
-                    Jedis jedis = new Jedis("bm-prd-redis-pri-test.xd819b.ng.0001.apn2.cache.amazonaws.com", 6379);
+
+                    // 로그인 성공 시 세션 설정
                     String sessionId = session.getId();
+                    Jedis jedis = new Jedis("bm-prd-redis-pri-test.xd819b.ng.0001.apn2.cache.amazonaws.com", 6379);
                     jedis.set(userID, sessionId);
+                    response.sendRedirect("/member?userId=" + userID);
                 } else {
-                    out.println("<script>showPopup();</script>");
+                    // 로그인 실패
+                    out.println("<script>alert('로그인 실패');</script>");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                out.println("<script>alert('오류가 발생했습니다.');</script>");
             } finally {
+                // 리소스 해제
                 if (rs != null) {
-                    try {
-                        Jedis jedis = new Jedis("redis-ela.hxmkqr.ng.0001.apn2.cache.amazonaws.com", 6379);
-                        String sessionId = session.getId();
-                        jedis.set(userID, sessionId);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }    
+                    try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
                 }
                 if (pstmt != null) {
-                    try {
-                        Jedis jedis = new Jedis("redis-ela.hxmkqr.ng.0001.apn2.cache.amazonaws.com", 6379);
-                        String sessionId = session.getId();
-                        jedis.set(userID, sessionId);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    try { pstmt.close(); } catch (SQLException e) { e.printStackTrace(); }
                 }
                 if (conn != null) {
-                    try {
-                        Jedis jedis = new Jedis("redis-ela.hxmkqr.ng.0001.apn2.cache.amazonaws.com", 6379);
-                        String sessionId = session.getId();
-                        jedis.set(userID, sessionId);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }    
+                    try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
                 }
             }
-            if(userID.equals(dbuserId) && password.equals(dbuserPassword)){
-                Jedis jedis = new Jedis("redis-ela.hxmkqr.ng.0001.apn2.cache.amazonaws.com", 6379);
-                String sessionId = session.getId();
-                jedis.set(userID, sessionId);
-                response.sendRedirect("/member?userId=" + userID);
-            } else {
-                out.println("<script>showPopup();</script>");
-            }
-            
         %>
     </div>
 </body>
 </html>
-
