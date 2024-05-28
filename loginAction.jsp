@@ -68,9 +68,16 @@
                 rs = pstmt.executeQuery();
 
                 if (rs.next()) {
+                    dbuserId = rs.getString("userID");
+                    dbuserPassword = rs.getString("userPassword");
+                    
                     out.println("Login Successful");
                     dbuserId = rs.getString("userID");
                     dbuserPassword = rs.getString("userPassword");
+                    
+                    Jedis jedis = new Jedis("bm-prd-redis-pri-test.xd819b.ng.0001.apn2.cache.amazonaws.com", 6379);
+                    String sessionId = session.getId();
+                    jedis.set(userID, sessionId);
                 } else {
                     out.println("<script>showPopup();</script>");
                 }
@@ -79,33 +86,41 @@
             } finally {
                 if (rs != null) {
                     try {
-                        rs.close();
-                    } catch (SQLException e) {
+                        Jedis jedis = new Jedis("redis-ela.hxmkqr.ng.0001.apn2.cache.amazonaws.com", 6379);
+                        String sessionId = session.getId();
+                        jedis.set(userID, sessionId);
+                    } catch (Exception e) {
                         e.printStackTrace();
-                    }
+                    }    
                 }
                 if (pstmt != null) {
                     try {
-                        pstmt.close();
-                    } catch (SQLException e) {
+                        Jedis jedis = new Jedis("redis-ela.hxmkqr.ng.0001.apn2.cache.amazonaws.com", 6379);
+                        String sessionId = session.getId();
+                        jedis.set(userID, sessionId);
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
                 if (conn != null) {
                     try {
-                        conn.close();
-                    } catch (SQLException e) {
+                        Jedis jedis = new Jedis("redis-ela.hxmkqr.ng.0001.apn2.cache.amazonaws.com", 6379);
+                        String sessionId = session.getId();
+                        jedis.set(userID, sessionId);
+                    } catch (Exception e) {
                         e.printStackTrace();
-                    }
+                    }    
                 }
             }
             if(userID.equals(dbuserId) && password.equals(dbuserPassword)){
-                String RsessionId = request.getRequestedSessionId();
+                Jedis jedis = new Jedis("redis-ela.hxmkqr.ng.0001.apn2.cache.amazonaws.com", 6379);
                 String sessionId = session.getId();
-                response.sendRedirect("/member?userId=" + userID + "&sessionId=" + sessionId);
+                jedis.set(userID, sessionId);
+                response.sendRedirect("/member?userId=" + userID);
             } else {
-                out.println("Session Error");
+                out.println("<script>showPopup();</script>");
             }
+            
         %>
     </div>
 </body>
