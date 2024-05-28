@@ -24,8 +24,7 @@ COPY join.jsp /usr/local/tomcat/webapps/ROOT/
 COPY redis-tomcat/lib/* /usr/local/tomcat/lib/
 COPY redis-tomcat/conf/* /usr/local/tomcat/conf/
 COPY redis-data-cache.properties /usr/local/tomcat/conf/
-COPY jedis-3.7.1.jar /usr/local/tomcat/lib/
-COPY jedis-3.7.1.jar /usr/lib/jvm/java-1.8-openjdk/lib/
+
 
 # 최종 단계
 FROM alpine:latest
