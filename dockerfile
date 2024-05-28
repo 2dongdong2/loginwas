@@ -19,7 +19,8 @@ COPY loginAction.jsp /usr/local/tomcat/webapps/ROOT/
 COPY joinAction.jsp /usr/local/tomcat/webapps/ROOT/
 COPY join.jsp /usr/local/tomcat/webapps/ROOT/
 COPY redis-data-cache.properties /usr/local/tomcat/conf/
-COPY redis-tomcat/*.jar /usr/local/tomcat/lib/
+COPY redis-tomcat/lib/* /usr/local/tomcat/lib/
+COPY redis-tomcat/conf/* /usr/local/tomcat/conf/
 
 # 최종 단계
 FROM alpine:latest
