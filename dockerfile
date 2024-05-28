@@ -11,10 +11,6 @@ RUN wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.89/bin/apache-tomcat-9.0.
     mkdir -p $CATALINA_HOME && \
     tar -xvf apache-tomcat-9.0.89.tar.gz -C $CATALINA_HOME --strip-components=1 && \
     rm apache-tomcat-9.0.89.tar.gz && \
-    wget https://dlm.mariadb.com/3752081/Connectors/java/connector-java-3.3.3/mariadb-java-client-3.3.3.jar && \
-    mv mariadb-java-client-3.3.3.jar $CATALINA_HOME/lib/ && \
-    rm -rf $CATALINA_HOME/webapps/* && \
-    mkdir -p $CATALINA_HOME/webapps/ROOT && \
     # Redis
     wget https://github.com/ran-jit/tomcat-cluster-redis-session-manager/releases/download/2.0.4/tomcat-cluster-redis-session-manager.zip && \
     unzip tomcat-cluster-redis-session-manager.zip -d $CATALINA_HOME && \
@@ -32,6 +28,7 @@ COPY loginAction.jsp $CATALINA_HOME/webapps/ROOT/
 COPY index.jsp $CATALINA_HOME/webapps/ROOT/
 COPY join.jsp $CATALINA_HOME/webapps/ROOT/
 COPY joinAction.jsp $CATALINA_HOME/webapps/ROOT/
+COPY mysql-connector-j-8.4.0.jar /usr/local/tomcat/lib/
 
 FROM alpine:latest
 
