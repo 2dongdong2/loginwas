@@ -45,22 +45,19 @@
         <%
             String userID = request.getParameter("userID");
             String password = request.getParameter("password");
-            
+
             // RDS 연결 정보
             String dbURL = "jdbc:mysql://database-1.crio22gqiskt.ap-northeast-2.rds.amazonaws.com/WebTest";
             String dbUser = "admin";
             String dbPassword = "123wkdtndi!";
-            
+
             Connection conn = null;
             PreparedStatement pstmt = null;
             ResultSet rs = null;
-            
-            String dbuserId = null;
-            String dbuserPassword = null;
 
             try {
                 // DB 연결
-                Class.forName("com.mysql.jdbc.Driver");
+                Class.forName("com.mysql.cj.jdbc.Driver");
                 conn = DriverManager.getConnection(dbURL, dbUser, dbPassword);
 
                 // 사용자 인증 쿼리 실행
@@ -71,13 +68,21 @@
                 rs = pstmt.executeQuery();
 
                 if (rs.next()) {
-                    dbuserId = rs.getString("userID");
-                    dbuserPassword = rs.getString("userPassword");
-
-                    // 로그인 성공 시 세션 설정
+                    // 로그인 성공
                     String sessionId = session.getId();
-                    Jedis jedis = new Jedis("redis-ela.hxmkqr.ng.0001.apn2.cache.amazonaws.com", 6379);
-                    jedis.set(userID, sessionId);
+
+                    try {
+                        // Redis 연결
+                        Jedis jedis = new Jedis("bm-prd-redis-pri-test.xd819b.ng.0001.apn2.cache.amazonaws.com", 6379);
+                        jedis.set(userID, sessionId);
+                        jedis.close();
+                    } catch (Exception redisException) {
+                        // Redis 연결 실패
+                        redisException.printStackTrace();
+                        out.println("<script>alert('Redis 연결 실패: " + redisException.getMessage() + "');</script>");
+                    }
+
+                    // 로그인 성공 시 리다이렉트
                     response.sendRedirect("/member?userId=" + userID);
                 } else {
                     // 로그인 실패
@@ -85,7 +90,7 @@
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                out.println("<script>alert('오류가 발생했습니다.');</script>");
+                out.println("<script>alert('오류가 발생했습니다: " + e.getMessage() + "');</script>");
             } finally {
                 // 리소스 해제
                 if (rs != null) {
