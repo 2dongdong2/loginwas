@@ -11,13 +11,7 @@ RUN apk add --no-cache openjdk8 curl tar && \
            /usr/local/tomcat/webapps/manager \
            /usr/local/tomcat/webapps/host-manager && \
     chmod +x /usr/local/tomcat/bin/*.sh
-    wget https://github.com/ran-jit/tomcat-cluster-redis-session-manager/releases/download/2.0.4/tomcat-cluster-redis-session-manager.zip && \
-    unzip tomcat-cluster-redis-session-manager.zip -d $CATALINA_HOME && \
-    mv /usr/local/tomcat/tomcat-cluster-redis-session-manager/lib/* /usr/local/tomcat/lib/ && \
-    mv /usr/local/tomcat/tomcat-cluster-redis-session-manager/conf/* /usr/local/tomcat/conf/ && \
-    wget https://repo1.maven.org/maven2/redis/clients/jedis/3.7.1/jedis-3.7.1.jar && \
-    cp jedis-3.7.1.jar /usr/lib/jvm/java-1.8-openjdk/lib/ && \
-    mv jedis-3.7.1.jar /usr/local/tomcat/lib/
+
 
 COPY mysql-connector-j-8.4.0.jar /usr/local/tomcat/lib/
 COPY index.jsp /usr/local/tomcat/webapps/ROOT/
@@ -26,7 +20,10 @@ COPY loginAction.jsp /usr/local/tomcat/webapps/ROOT/
 COPY joinAction.jsp /usr/local/tomcat/webapps/ROOT/
 COPY join.jsp /usr/local/tomcat/webapps/ROOT/
 COPY redis-data-cache.properties /usr/local/tomcat/conf/
-
+COPY jedis-3.7.1.jar /usr/lib/jvm/java-1.8-openjdk/lib/
+COPY jedis-3.7.1.jar /usr/local/tomcat/lib/
+COPY redis-tomcat/lib/* /usr/local/tomcat/lib/
+COPY redis-tomcat/conf/* /usr/local/tomcat/conf/
 
 # 최종 단계
 FROM alpine:latest
